@@ -1,24 +1,31 @@
 package com.burgerbuilder.backend.Model;
 
 import lombok.Data;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 @Data
 @Entity
 public class Product {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
     private String name;
     private Float basePrice;
 
-    @OneToMany(mappedBy = "product",cascade = CascadeType.ALL)
-    private List<Ingredient> ingredients=new ArrayList<>();
+    public Product(String name, Float basePrice) {
+        this.name = name;
+        this.basePrice = basePrice;
+    }
 
-    @ManyToMany(mappedBy = "products",cascade = {CascadeType.MERGE,CascadeType.PERSIST})
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    public Product() {
+    }
+
+    @OneToMany(mappedBy = "product",cascade = CascadeType.ALL)
     private Set<Order> orders=new HashSet<>();
+
+
 }

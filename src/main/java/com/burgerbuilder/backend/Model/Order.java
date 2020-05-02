@@ -1,8 +1,6 @@
 package com.burgerbuilder.backend.Model;
 
 import lombok.Data;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -13,19 +11,20 @@ import java.util.UUID;
 @Entity(name = "orders")
 public class Order {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
     private String Status;
     private Boolean payed;
     private Float price;
 
-    @ManyToMany(cascade = {CascadeType.MERGE,CascadeType.PERSIST})
-    @JoinTable(name = "orders_product",
-            joinColumns = {@JoinColumn(name = "orders_id")},
-            inverseJoinColumns = {@JoinColumn(name = "product_id")})
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private List<Product> products=new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Product product;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     private User user;
+
+    @OneToMany(mappedBy = "order",cascade = CascadeType.ALL)
+    private List<OrderedIngredients> orderedIngredients=new ArrayList<>();
+
+
 }

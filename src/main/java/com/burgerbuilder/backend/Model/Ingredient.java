@@ -2,10 +2,9 @@ package com.burgerbuilder.backend.Model;
 
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -13,12 +12,21 @@ import java.util.UUID;
 public class Ingredient {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
     private String name;
     private Float price;
 
-    @ManyToOne
-    @JoinColumn(name = "product_id", nullable = false)
-    private Product product;
+    public Ingredient(String name, Float price) {
+        this.name = name;
+        this.price = price;
+    }
+
+    public Ingredient() {
+    }
+
+    @OneToMany(mappedBy = "ingredient",cascade = CascadeType.ALL)
+    private Set<OrderedIngredients> orderedIngredients=new HashSet<>();
+
 
 }
