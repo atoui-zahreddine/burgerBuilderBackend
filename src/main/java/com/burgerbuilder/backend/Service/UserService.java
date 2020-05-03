@@ -1,8 +1,11 @@
 package com.burgerbuilder.backend.Service;
 
-import com.burgerbuilder.backend.DTO.Request.SignInRequestDTO;
+import com.burgerbuilder.backend.DTO.Request.SignInRequest;
+import com.burgerbuilder.backend.DTO.Request.SignUpRequest;
+import com.burgerbuilder.backend.DTO.Response.SignUpResponse;
 import com.burgerbuilder.backend.Exception.BadCredentialsException;
 import com.burgerbuilder.backend.Exception.NotFoundException;
+import com.burgerbuilder.backend.Exception.ResourceExistException;
 import com.burgerbuilder.backend.Model.User;
 import com.burgerbuilder.backend.Repository.UserRepository;
 import com.burgerbuilder.backend.Utils.JwtUtils.JwtUtils;
@@ -50,22 +53,17 @@ public class UserService implements UserDetailsService {
 
 
 
-    public ResponseEntity<?> save(User user) {
+    public ResponseEntity<?> save(SignUpRequest signUpRequest) {
 
-        if(userRepository.getUserByEmail(user.getEmail()).isPresent()){
-
+        if(userRepository.getUserByEmail(signUpRequest.getEmail()).isPresent()){
+            throw new ResourceExistException(115,"email already exist !");
         }
-
-
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
-
-        Map<String,String> response=new HashMap<>();
-        response.put("message","created");
+        signUpRequest.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
+        var response=new SignUpResponse(userRepository.save(new User(signUpRequest)));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public ResponseEntity<?> login(SignInRequestDTO request) throws BadCredentialsException,NotFoundException{
+    public ResponseEntity<?> login(SignInRequest request) throws BadCredentialsException,NotFoundException{
         Authentication authentication;
         try{
             authentication=authenticationManager.authenticate(

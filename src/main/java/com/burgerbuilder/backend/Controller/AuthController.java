@@ -1,10 +1,13 @@
 package com.burgerbuilder.backend.Controller;
 
-import com.burgerbuilder.backend.DTO.Request.SignInRequestDTO;
+import com.burgerbuilder.backend.DTO.Request.SignInRequest;
+import com.burgerbuilder.backend.DTO.Request.SignUpRequest;
 import com.burgerbuilder.backend.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/auth")
@@ -18,7 +21,13 @@ public class AuthController {
     }
 
     @PostMapping({"/signin","singin/"})
-    public ResponseEntity<?> login(@RequestBody SignInRequestDTO request){
+    public ResponseEntity<?> login(@Valid @RequestBody SignInRequest request){
         return userService.login(request);
     }
+
+    @PostMapping({"/signup", "singup/"})
+    public ResponseEntity<?> save(@Valid @RequestBody SignUpRequest request){
+        return userService.save(request);
+    }
+
 }

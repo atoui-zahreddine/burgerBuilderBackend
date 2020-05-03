@@ -1,5 +1,6 @@
 package com.burgerbuilder.backend.Model;
 
+import com.burgerbuilder.backend.DTO.Request.SignUpRequest;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -39,6 +40,14 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
     private List<Order> orders=new ArrayList<>();
+
+    public User(SignUpRequest signUpRequest) {
+        this.email=signUpRequest.getEmail();
+        this.name=signUpRequest.getName();
+        this.lastName=signUpRequest.getLastName();
+        this.phoneNumber=signUpRequest.getPhoneNumber();
+        this.password=signUpRequest.getPassword();
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
