@@ -1,20 +1,34 @@
 package com.burgerbuilder.backend.Controller;
 
+import com.burgerbuilder.backend.DTO.Request.SignUpRequest;
 import com.burgerbuilder.backend.DTO.Response.UserDTOResponse;
 import com.burgerbuilder.backend.Model.User;
+import com.burgerbuilder.backend.Service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/users")
 public class UserController {
-    @GetMapping("/me")
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    @GetMapping("/current")
     public ResponseEntity<?> getCurrentUser(@AuthenticationPrincipal User principal){
         var response=new UserDTOResponse(principal);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @PostMapping({"","/"})
+    public ResponseEntity<?> save(@Valid @RequestBody SignUpRequest request){
+        return userService.save(request);
+    }
+
 }

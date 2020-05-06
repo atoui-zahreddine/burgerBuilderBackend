@@ -38,6 +38,9 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL )
     private List<Address> addresses=new ArrayList<>();
 
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    private List<Authority> authorities=new ArrayList<>();
+
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
     private List<Order> orders=new ArrayList<>();
 
@@ -51,7 +54,15 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return authorities;
+    }
+
+    public void setAuthorities(List<Authority> authorities) {
+        this.authorities = authorities;
+    }
+
+    public void addAuthority (String authority){
+        this.authorities.add(new Authority(authority,this));
     }
 
     @Override

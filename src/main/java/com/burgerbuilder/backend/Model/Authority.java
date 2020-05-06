@@ -1,4 +1,33 @@
 package com.burgerbuilder.backend.Model;
 
-public class Authority {
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+
+import javax.persistence.*;
+import java.util.UUID;
+
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor
+public class Authority implements GrantedAuthority {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private UUID id;
+    private String authority;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User user;
+
+    public Authority(String authority,User user) {
+        this.authority=authority;
+        this.user=user;
+    }
+
+    @Override
+    public String getAuthority() {
+        return authority;
+    }
 }

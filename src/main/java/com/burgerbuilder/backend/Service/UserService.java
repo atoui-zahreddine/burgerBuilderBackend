@@ -54,7 +54,9 @@ public class UserService implements UserDetailsService {
             throw new ResourceExistException(115,"email already exist !");
         }
         signUpRequest.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
-        var user =userRepository.save(new User(signUpRequest));
+        var user =new User(signUpRequest);
+        user.addAuthority("ROLE_USER");
+        user =userRepository.save(user);
         var response=new UserDTOResponse(user);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

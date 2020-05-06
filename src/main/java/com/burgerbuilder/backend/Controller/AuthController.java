@@ -25,9 +25,6 @@ public class AuthController {
         return userService.login(request);
     }
 
-    @PostMapping({"/signup", "singup/"})
-    public ResponseEntity<?> save(@Valid @RequestBody SignUpRequest request){
-        return userService.save(request);
-    }
+
 
 }

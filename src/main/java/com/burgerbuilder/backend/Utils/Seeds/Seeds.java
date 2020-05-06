@@ -34,12 +34,13 @@ public class Seeds implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args)  {
         List<User> users=userRepository.findAll();
         if(users.isEmpty()) {
             logger.info("adding some data ...");
             User user = new User("at.zahreddine@gmail.com",passwordEncoder.encode("azerty123"),
                     "zahreddine","atoui","26945535");
+            user.addAuthority("ROLE_USER");
             Address address=new Address();
             address.setCity("medenine");
             address.setStreet("26 rue imam chafei");
