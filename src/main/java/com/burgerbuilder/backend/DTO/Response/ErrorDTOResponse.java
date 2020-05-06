@@ -10,7 +10,7 @@ import java.util.Map;
 
 @Getter
 @Setter
-public class ErrorResponse {
+public class ErrorDTOResponse {
 
     private int errorCode;
     private Map<String,String> errors;
@@ -18,11 +18,11 @@ public class ErrorResponse {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date timestamp;
 
-    public ErrorResponse() {
+    public ErrorDTOResponse() {
         this.timestamp=new Date();
     }
 
-    public ErrorResponse(int errorCode, Map<String,String> errors, String uri) {
+    public ErrorDTOResponse(int errorCode, Map<String,String> errors, String uri) {
         this();
         this.errorCode = errorCode;
         this.errors = errors;

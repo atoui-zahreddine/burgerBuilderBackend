@@ -8,13 +8,13 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class SignUpResponse {
+public class UserDTOResponse {
     private String userId;
     private String email;
     private String name;
     private String lastName;
 
-    public SignUpResponse(User user) {
+    public UserDTOResponse(User user) {
         this.email=user.getEmail();
         this.userId=user.getId().toString();
         this.name=user.getName();

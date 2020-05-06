@@ -2,7 +2,7 @@ package com.burgerbuilder.backend.Service;
 
 import com.burgerbuilder.backend.DTO.Request.SignInRequest;
 import com.burgerbuilder.backend.DTO.Request.SignUpRequest;
-import com.burgerbuilder.backend.DTO.Response.SignUpResponse;
+import com.burgerbuilder.backend.DTO.Response.UserDTOResponse;
 import com.burgerbuilder.backend.Exception.BadCredentialsException;
 import com.burgerbuilder.backend.Exception.NotFoundException;
 import com.burgerbuilder.backend.Exception.ResourceExistException;
@@ -28,18 +28,15 @@ import java.util.Optional;
 @Service
 public class UserService implements UserDetailsService {
 
-    private final UserRepository userRepository;
-    private final AuthenticationManager authenticationManager;
-    private final BCryptPasswordEncoder passwordEncoder;
-    private final JwtUtils jwtUtils;
-
     @Autowired
-    public UserService(UserRepository userRepository, AuthenticationManager authenticationManager, BCryptPasswordEncoder passwordEncoder, JwtUtils jwtUtils) {
-        this.userRepository = userRepository;
-        this.authenticationManager = authenticationManager;
-        this.passwordEncoder = passwordEncoder;
-        this.jwtUtils = jwtUtils;
-    }
+    private  UserRepository userRepository;
+    @Autowired
+    private  AuthenticationManager authenticationManager;
+    @Autowired
+    private  BCryptPasswordEncoder passwordEncoder;
+    @Autowired
+    private  JwtUtils jwtUtils;
+
 
     @Override
     public UserDetails loadUserByUsername(String email)  throws NotFoundException {
@@ -51,15 +48,14 @@ public class UserService implements UserDetailsService {
         return user.get();
     }
 
-
-
     public ResponseEntity<?> save(SignUpRequest signUpRequest) {
 
         if(userRepository.getUserByEmail(signUpRequest.getEmail()).isPresent()){
             throw new ResourceExistException(115,"email already exist !");
         }
         signUpRequest.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
-        var response=new SignUpResponse(userRepository.save(new User(signUpRequest)));
+        var user =userRepository.save(new User(signUpRequest));
+        var response=new UserDTOResponse(user);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -76,7 +72,7 @@ public class UserService implements UserDetailsService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         Map<String,String> response=new HashMap<>();
-        response.put("Token", jwtUtils.generateToken());
+        response.put("Token", jwtUtils.generateToken((User)authentication.getPrincipal()));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

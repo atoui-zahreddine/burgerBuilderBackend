@@ -17,7 +17,7 @@ public class Order {
     private Boolean payed;
     private Float price;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private Product product;
 
     @ManyToOne(fetch = FetchType.LAZY)
