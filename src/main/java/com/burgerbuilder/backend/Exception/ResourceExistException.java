@@ -3,10 +3,9 @@ package com.burgerbuilder.backend.Exception;
 import org.springframework.http.HttpStatus;
 
 public class ResourceExistException extends ApiBaseException{
-    private int errorCode;
+
     public ResourceExistException(int errorCode,String message) {
-        super(message);
-        this.errorCode = errorCode;
+        super(message,errorCode);
     }
 
     @Override

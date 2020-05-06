@@ -1,5 +1,7 @@
 package com.burgerbuilder.backend.Security;
 
+import com.burgerbuilder.backend.Exception.AuthorizationException;
+import com.burgerbuilder.backend.Exception.NotFoundException;
 import com.burgerbuilder.backend.Model.User;
 import com.burgerbuilder.backend.Service.UserService;
 import com.burgerbuilder.backend.Utils.JwtUtils.JwtUtils;
@@ -28,19 +30,22 @@ public class AuthFilter extends OncePerRequestFilter {
 
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException , AuthorizationException , NotFoundException {
         var header=request.getHeader(HEADER);
         if(header != null && header.startsWith(HEADER_PREFIX) && SecurityContextHolder.getContext()!=null){
             var token = header.replace(HEADER_PREFIX,"");
             var username=jwtUtils.getUsernameFromToken(token);
             if(username!=null){
                 var user=(User) userService.loadUserByUsername(username);
-                if(user!=null){
-                    UsernamePasswordAuthenticationToken authenticationToken=new UsernamePasswordAuthenticationToken(user,null,user.getAuthorities());
-                    SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-                }
+                UsernamePasswordAuthenticationToken authenticationToken=new UsernamePasswordAuthenticationToken(
+                        user,null,user.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            }else {
+                throw new AuthorizationException("bad token",240);
             }
         }
         filterChain.doFilter(request,response);
     }
+
 }
