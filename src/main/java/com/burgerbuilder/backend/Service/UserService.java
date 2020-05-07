@@ -2,8 +2,10 @@ package com.burgerbuilder.backend.Service;
 
 import com.burgerbuilder.backend.DTO.Request.SignInRequest;
 import com.burgerbuilder.backend.DTO.Request.SignUpRequest;
+import com.burgerbuilder.backend.DTO.Request.UpdatePasswordDTORequest;
 import com.burgerbuilder.backend.DTO.Response.UserDTOResponse;
 import com.burgerbuilder.backend.Exception.BadCredentialsException;
+import com.burgerbuilder.backend.Exception.UpdatePasswordException;
 import com.burgerbuilder.backend.Exception.NotFoundException;
 import com.burgerbuilder.backend.Exception.ResourceExistException;
 import com.burgerbuilder.backend.Model.User;
@@ -76,5 +78,17 @@ public class UserService implements UserDetailsService {
         Map<String,String> response=new HashMap<>();
         response.put("Token", jwtUtils.generateToken((User)authentication.getPrincipal()));
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    public ResponseEntity<?> updatePassword(UpdatePasswordDTORequest request, User user) {
+            if(!passwordEncoder.matches(request.getOldPassword(),user.getPassword()))
+                throw new UpdatePasswordException("old password is not correct.",194);
+
+            if(passwordEncoder.matches(request.getNewPassword(),user.getPassword()))
+                throw new UpdatePasswordException("same password.",195);
+
+            user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+            userRepository.save(user);
+            return new ResponseEntity<>(Map.of("Status","Ok"),HttpStatus.OK);
     }
 }

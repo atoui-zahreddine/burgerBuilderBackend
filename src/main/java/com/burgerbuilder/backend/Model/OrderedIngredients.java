@@ -2,6 +2,7 @@ package com.burgerbuilder.backend.Model;
 
 
 import lombok.Data;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -15,6 +16,7 @@ public class OrderedIngredients implements Serializable {
 
     @Id
     @ManyToOne(fetch = FetchType.LAZY)
+    @Type(type="uuid-char")
     private Order order;
 
     @Id

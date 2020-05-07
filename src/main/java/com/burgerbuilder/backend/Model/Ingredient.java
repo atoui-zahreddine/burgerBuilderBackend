@@ -1,6 +1,7 @@
 package com.burgerbuilder.backend.Model;
 
 import lombok.Data;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -13,6 +14,7 @@ public class Ingredient {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Type(type="uuid-char")
     private UUID id;
     private String name;
     private Float price;
