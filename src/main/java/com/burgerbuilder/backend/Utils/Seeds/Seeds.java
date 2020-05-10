@@ -6,6 +6,7 @@ import com.burgerbuilder.backend.Model.Ingredient;
 import com.burgerbuilder.backend.Model.Product;
 import com.burgerbuilder.backend.Model.User;
 import com.burgerbuilder.backend.Repository.*;
+import com.burgerbuilder.backend.Service.EmailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -23,14 +24,16 @@ public class Seeds implements CommandLineRunner {
     private final IngredientRepository ingredientRepository;
     private final OrderRepository orderRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
-    public Seeds(UserRepository userRepository, AddressRepository addressRepository, ProductRepository productRepository, IngredientRepository ingredientRepository, OrderRepository orderRepository, BCryptPasswordEncoder passwordEncoder) {
+    public Seeds(UserRepository userRepository, AddressRepository addressRepository, ProductRepository productRepository, IngredientRepository ingredientRepository, OrderRepository orderRepository, BCryptPasswordEncoder passwordEncoder, EmailService emailService) {
         this.userRepository = userRepository;
         this.addressRepository = addressRepository;
         this.productRepository = productRepository;
         this.ingredientRepository = ingredientRepository;
         this.orderRepository = orderRepository;
         this.passwordEncoder = passwordEncoder;
+        this.emailService = emailService;
     }
 
     @Override
@@ -55,5 +58,6 @@ public class Seeds implements CommandLineRunner {
             ingredients.forEach(ingredientRepository::save);
             productRepository.save(new Product("burger",4000.00f));
         }
+
     }
 }

@@ -34,7 +34,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
             .authorizeRequests()
-            .mvcMatchers(HttpMethod.POST,"/auth/**","/users","/users/").permitAll()
+            .mvcMatchers(HttpMethod.POST,"/auth/**","/users","/users/","**/reset-password*").permitAll()
             .anyRequest().authenticated()
             .and()
             .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class)

@@ -13,14 +13,14 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 @NoArgsConstructor
-public class UserDTOResponse {
+public class UserResponse {
     private String userId;
     private String email;
     private String name;
     private String lastName;
     private List<String> authority=new ArrayList<>();
 
-    public UserDTOResponse(User user) {
+    public UserResponse(User user) {
         this.email=user.getEmail();
         this.userId=user.getId().toString();
         this.name=user.getName();

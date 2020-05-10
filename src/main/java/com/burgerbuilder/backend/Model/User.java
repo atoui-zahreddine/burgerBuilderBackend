@@ -46,6 +46,9 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
     private List<Order> orders=new ArrayList<>();
 
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+    private List<PasswordToken> passwordTokens=new ArrayList<>();
+
     public User(SignUpRequest signUpRequest) {
         this.email=signUpRequest.getEmail();
         this.name=signUpRequest.getName();

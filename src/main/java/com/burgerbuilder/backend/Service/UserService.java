@@ -1,14 +1,14 @@
 package com.burgerbuilder.backend.Service;
 
+import com.burgerbuilder.backend.DTO.Request.ResetPasswordRequest;
 import com.burgerbuilder.backend.DTO.Request.SignInRequest;
 import com.burgerbuilder.backend.DTO.Request.SignUpRequest;
-import com.burgerbuilder.backend.DTO.Request.UpdatePasswordDTORequest;
-import com.burgerbuilder.backend.DTO.Response.UserDTOResponse;
-import com.burgerbuilder.backend.Exception.BadCredentialsException;
-import com.burgerbuilder.backend.Exception.UpdatePasswordException;
-import com.burgerbuilder.backend.Exception.NotFoundException;
-import com.burgerbuilder.backend.Exception.ResourceExistException;
+import com.burgerbuilder.backend.DTO.Request.UpdatePasswordRequest;
+import com.burgerbuilder.backend.DTO.Response.UserResponse;
+import com.burgerbuilder.backend.Exception.*;
+import com.burgerbuilder.backend.Model.PasswordToken;
 import com.burgerbuilder.backend.Model.User;
+import com.burgerbuilder.backend.Repository.TokenRepository;
 import com.burgerbuilder.backend.Repository.UserRepository;
 import com.burgerbuilder.backend.Utils.JwtUtils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +22,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.context.Context;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import javax.mail.MessagingException;
+import java.util.*;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -33,11 +33,15 @@ public class UserService implements UserDetailsService {
     @Autowired
     private  UserRepository userRepository;
     @Autowired
+    private TokenRepository tokenRepository;
+    @Autowired
     private  AuthenticationManager authenticationManager;
     @Autowired
     private  BCryptPasswordEncoder passwordEncoder;
     @Autowired
     private  JwtUtils jwtUtils;
+    @Autowired
+    private EmailService emailService;
 
 
     @Override
@@ -59,7 +63,7 @@ public class UserService implements UserDetailsService {
         var user =new User(signUpRequest);
         user.addAuthority("ROLE_USER");
         user =userRepository.save(user);
-        var response=new UserDTOResponse(user);
+        var response=new UserResponse(user);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -80,7 +84,7 @@ public class UserService implements UserDetailsService {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public ResponseEntity<?> updatePassword(UpdatePasswordDTORequest request, User user) {
+    public ResponseEntity<?> updatePassword(UpdatePasswordRequest request, User user) {
             if(!passwordEncoder.matches(request.getOldPassword(),user.getPassword()))
                 throw new UpdatePasswordException("old password is not correct.",194);
 
@@ -91,4 +95,40 @@ public class UserService implements UserDetailsService {
             userRepository.save(user);
             return new ResponseEntity<>(Map.of("Status","Ok"),HttpStatus.OK);
     }
+
+    public void passwordReset(ResetPasswordRequest request) {
+        Optional<User> user=userRepository.getUserByEmail(request.getEmail());
+
+        if(user.isPresent()){
+            UUID token=UUID.randomUUID();
+            Date expirationDate=new Date( System.currentTimeMillis() + 3600 * 24 * 1000 );
+            PasswordToken passwordToken=new PasswordToken(token,expirationDate,user.get());
+            tokenRepository.save(passwordToken);
+            try {
+                var context=new Context();
+                context.setVariables(Map.of("name",user.get().getName(),"token",token.toString()));
+                emailService.sendPasswordResetEmail(request.getEmail(),context);
+            } catch (MessagingException e) {
+                throw new InternalServerException("server error",500);
+            }
+        }
+    }
+
+    public ResponseEntity<?> validatePasswordReset(UUID token, String newPassword){
+
+        Optional<PasswordToken> passwordToken=tokenRepository.findByTokenAndExpireDateAfter(token,new Date());
+
+        if(!passwordToken.isPresent()){
+            throw new NotFoundException(404,"the token is expired or invalid .");
+        }
+
+        Optional<User> user=userRepository.findById(passwordToken.get().getUser().getId());
+        user.get().setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user.get());
+        tokenRepository.deleteByToken(token);
+        return new ResponseEntity<>(Map.of("Status","Ok"),HttpStatus.OK);
+    }
+
+
+
 }

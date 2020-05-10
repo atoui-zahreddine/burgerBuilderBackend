@@ -10,7 +10,7 @@ import javax.validation.constraints.Size;
 @Getter
 @Setter
 @NoArgsConstructor
-public class UpdatePasswordDTORequest {
+public class UpdatePasswordRequest {
     @NotBlank(message = "oldPassword is required.")
     private String oldPassword;
     @NotBlank(message = "newPassword is required.")

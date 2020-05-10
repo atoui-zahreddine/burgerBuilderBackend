@@ -1,6 +1,6 @@
 package com.burgerbuilder.backend.Security;
 
-import com.burgerbuilder.backend.DTO.Response.ErrorDTOResponse;
+import com.burgerbuilder.backend.DTO.Response.ErrorResponse;
 import com.burgerbuilder.backend.Exception.ApiBaseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,7 +22,7 @@ public class AuthExceptionHandlerFilter extends OncePerRequestFilter {
         try {
             filterChain.doFilter(request,response);
         }catch (ApiBaseException ex){
-            ErrorDTOResponse errorResponse=new ErrorDTOResponse(
+            ErrorResponse errorResponse=new ErrorResponse(
                     240, Map.of("error",ex.getMessage()),request.getRequestURI());
             response.setStatus(HttpStatus.FORBIDDEN.value());
             response.setHeader("Content-Type","application/json");
@@ -30,7 +30,7 @@ public class AuthExceptionHandlerFilter extends OncePerRequestFilter {
         }
     }
 
-    private String convertObjectToJson(ErrorDTOResponse errorResponse) throws JsonProcessingException {
+    private String convertObjectToJson(ErrorResponse errorResponse) throws JsonProcessingException {
         if (errorResponse == null) {
             return null;
         }
