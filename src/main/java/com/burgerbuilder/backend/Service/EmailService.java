@@ -40,7 +40,13 @@ public class EmailService {
         mailSender.send(message);
     }
     @Async
-    public void sendPasswordResetEmail(String to,Context context) throws MessagingException {
+    public void sendPasswordResetMail(String to, Context context) throws MessagingException {
+        String html=template.process(PASSWORD_RESET_EMAIL_TEMPLATE,context);
+        sendMail(to,PASSWORD_RESET_EMAIL_SUBJECT,html);
+    }
+
+    @Async
+    public void sendEmailVerificationMail(String to,Context context) throws MessagingException {
         String html=template.process(PASSWORD_RESET_EMAIL_TEMPLATE,context);
         sendMail(to,PASSWORD_RESET_EMAIL_SUBJECT,html);
     }

@@ -1,9 +1,6 @@
 package com.burgerbuilder.backend.Service;
 
-import com.burgerbuilder.backend.DTO.Request.ResetPasswordRequest;
-import com.burgerbuilder.backend.DTO.Request.SignInRequest;
-import com.burgerbuilder.backend.DTO.Request.SignUpRequest;
-import com.burgerbuilder.backend.DTO.Request.UpdatePasswordRequest;
+import com.burgerbuilder.backend.DTO.Request.*;
 import com.burgerbuilder.backend.DTO.Response.UserResponse;
 import com.burgerbuilder.backend.Exception.*;
 import com.burgerbuilder.backend.Model.PasswordToken;
@@ -96,7 +93,7 @@ public class UserService implements UserDetailsService {
             return new ResponseEntity<>(Map.of("Status","Ok"),HttpStatus.OK);
     }
 
-    public void passwordReset(ResetPasswordRequest request) {
+    public void resetPassword(ResetPasswordRequest request) {
         Optional<User> user=userRepository.getUserByEmail(request.getEmail());
 
         if(user.isPresent()){
@@ -107,7 +104,7 @@ public class UserService implements UserDetailsService {
             try {
                 var context=new Context();
                 context.setVariables(Map.of("name",user.get().getName(),"token",token.toString()));
-                emailService.sendPasswordResetEmail(request.getEmail(),context);
+                emailService.sendPasswordResetMail(request.getEmail(),context);
             } catch (MessagingException e) {
                 throw new InternalServerException("server error",500);
             }
@@ -125,10 +122,12 @@ public class UserService implements UserDetailsService {
         Optional<User> user=userRepository.findById(passwordToken.get().getUser().getId());
         user.get().setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user.get());
-        tokenRepository.deleteByToken(token);
+        tokenRepository.deleteByUserId(user.get().getId().toString());
         return new ResponseEntity<>(Map.of("Status","Ok"),HttpStatus.OK);
     }
 
 
-
+    public ResponseEntity<?> verifyEmailAddress(EmailValidationRequest request) {
+        return null;
+    }
 }

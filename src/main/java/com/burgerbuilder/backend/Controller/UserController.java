@@ -1,9 +1,6 @@
 package com.burgerbuilder.backend.Controller;
 
-import com.burgerbuilder.backend.DTO.Request.ResetPasswordRequest;
-import com.burgerbuilder.backend.DTO.Request.ResetPasswordValidationRequest;
-import com.burgerbuilder.backend.DTO.Request.SignUpRequest;
-import com.burgerbuilder.backend.DTO.Request.UpdatePasswordRequest;
+import com.burgerbuilder.backend.DTO.Request.*;
 import com.burgerbuilder.backend.DTO.Response.UserResponse;
 import com.burgerbuilder.backend.Model.User;
 import com.burgerbuilder.backend.Service.UserService;
@@ -44,12 +41,17 @@ public class UserController {
 
     @PostMapping("/reset-password")
     public void resetPassword(@Valid @RequestBody ResetPasswordRequest request){
-        userService.passwordReset(request);
+        userService.resetPassword(request);
     }
 
     @PostMapping("/reset-password-validation")
     public ResponseEntity<?> validatePasswordReset(@Valid @RequestBody ResetPasswordValidationRequest request){
         return userService.validatePasswordReset(UUID.fromString(request.getToken()),request.getNewPassword());
     }
+    @PostMapping("/confirm-email")
+    public ResponseEntity<?> verifyEmailAddress(EmailValidationRequest request){
+        return userService.verifyEmailAddress(request);
+    }
+
 
 }

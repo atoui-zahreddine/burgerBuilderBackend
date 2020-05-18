@@ -38,8 +38,8 @@ public class Seeds implements CommandLineRunner {
 
     @Override
     public void run(String... args)  {
-        List<User> users=userRepository.findAll();
-        if(users.isEmpty()) {
+        List<Address> addresses=addressRepository.findAll();
+        if(addresses.isEmpty()) {
             logger.info("adding some data ...");
             User user = new User("at.zahreddine@gmail.com",passwordEncoder.encode("azerty123"),
                     "zahreddine","atoui","26945535");
