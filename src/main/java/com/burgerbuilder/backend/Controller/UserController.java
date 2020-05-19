@@ -30,7 +30,7 @@ public class UserController {
 
     @PostMapping({"","/"})
     public ResponseEntity<?> save(@Valid @RequestBody SignUpRequest request){
-        return userService.save(request);
+        return userService.createUser(request);
     }
 
     @PutMapping({"/password","/password"})
@@ -46,12 +46,18 @@ public class UserController {
 
     @PostMapping("/reset-password-validation")
     public ResponseEntity<?> validatePasswordReset(@Valid @RequestBody ResetPasswordValidationRequest request){
+
         return userService.validatePasswordReset(UUID.fromString(request.getToken()),request.getNewPassword());
     }
-    @PostMapping("/confirm-email")
-    public ResponseEntity<?> verifyEmailAddress(EmailValidationRequest request){
-        return userService.verifyEmailAddress(request);
+
+    @PostMapping("/email-token-verification")
+    public ResponseEntity<?> verifyEmailAddressToken(@Valid @RequestBody EmailValidationRequest request){
+        return userService.verifyEmailAddressToken(request);
     }
 
+    @GetMapping("/email-verification")
+    public ResponseEntity<?> sendEmailVerificationToken(@AuthenticationPrincipal User user){
+        return userService.sendEmailVerificationToken(user);
+    }
 
 }

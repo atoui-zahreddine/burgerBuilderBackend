@@ -8,6 +8,8 @@ import com.burgerbuilder.backend.Model.User;
 import com.burgerbuilder.backend.Repository.TokenRepository;
 import com.burgerbuilder.backend.Repository.UserRepository;
 import com.burgerbuilder.backend.Utils.JwtUtils.JwtUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,13 +21,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.thymeleaf.context.Context;
 
 import javax.mail.MessagingException;
 import java.util.*;
 
 @Service
 public class UserService implements UserDetailsService {
+
+    private Logger logger= LoggerFactory.getLogger(UserService.class);
 
     @Autowired
     private  UserRepository userRepository;
@@ -51,7 +54,7 @@ public class UserService implements UserDetailsService {
         return user.get();
     }
 
-    public ResponseEntity<?> save(SignUpRequest signUpRequest) {
+    public ResponseEntity<?> createUser(SignUpRequest signUpRequest) {
 
         if(userRepository.getUserByEmail(signUpRequest.getEmail()).isPresent()){
             throw new ResourceExistException(115,"email already exist !");
@@ -60,6 +63,11 @@ public class UserService implements UserDetailsService {
         var user =new User(signUpRequest);
         user.addAuthority("ROLE_USER");
         user =userRepository.save(user);
+        try {
+            emailService.sendEmailVerificationMail(user);
+        } catch (MessagingException e) {
+            logger.error("error with sending email verification mail .");
+        }
         var response=new UserResponse(user);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -102,10 +110,9 @@ public class UserService implements UserDetailsService {
             PasswordToken passwordToken=new PasswordToken(token,expirationDate,user.get());
             tokenRepository.save(passwordToken);
             try {
-                var context=new Context();
-                context.setVariables(Map.of("name",user.get().getName(),"token",token.toString()));
-                emailService.sendPasswordResetMail(request.getEmail(),context);
+                emailService.sendPasswordResetMail(user.get(),token.toString());
             } catch (MessagingException e) {
+                logger.error("error with sending password reset mail .");
                 throw new InternalServerException("server error",500);
             }
         }
@@ -127,7 +134,31 @@ public class UserService implements UserDetailsService {
     }
 
 
-    public ResponseEntity<?> verifyEmailAddress(EmailValidationRequest request) {
-        return null;
+    public ResponseEntity<?> sendEmailVerificationToken(User user){
+        if(user.isEmailVerified() && user.getEmailVerificationToken()==null)
+            throw new BadRequestException("this email is already verified.",400);
+
+        try {
+            emailService.sendEmailVerificationMail(user);
+        } catch (MessagingException e) {
+            logger.error("error with sending email verification mail .");
+        }
+
+    return new ResponseEntity<>(Map.of("Status","OK"),HttpStatus.OK);
+    }
+
+    public ResponseEntity<?> verifyEmailAddressToken(EmailValidationRequest request) {
+        var user=userRepository.getUserByEmailVerificationToken(request.getToken());
+        if(!user.isPresent())
+            throw new NotFoundException(201,"this token doesn't exist or the email address is verified.");
+        if(user.get().isEmailVerified())
+            throw new BadRequestException("this email is verified.",400);
+
+        user.get().setEmailVerificationToken(null);
+        user.get().setEmailVerified(true);
+
+        userRepository.save(user.get());
+
+        return new ResponseEntity<>(Map.of("Status","OK"),HttpStatus.OK);
     }
 }

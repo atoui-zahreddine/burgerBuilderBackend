@@ -42,7 +42,7 @@ public class Seeds implements CommandLineRunner {
         if(addresses.isEmpty()) {
             logger.info("adding some data ...");
             User user = new User("at.zahreddine@gmail.com",passwordEncoder.encode("azerty123"),
-                    "zahreddine","atoui","26945535");
+                    "zahreddine","atoui","+21626945535");
             user.addAuthority("ROLE_USER");
             Address address=new Address();
             address.setCity("medenine");

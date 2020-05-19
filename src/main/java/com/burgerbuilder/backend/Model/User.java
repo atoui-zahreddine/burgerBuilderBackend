@@ -8,6 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -22,12 +23,17 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Type(type="uuid-char")
-    private UUID id;
+    private UUID   id;
+    @NotNull
     private String email;
+    @NotNull
     private String password;
     private String name;
     private String lastName;
     private String phoneNumber;
+    private String emailVerificationToken;
+    private boolean isEmailVerified=false;
+    private boolean isPhoneNumberVerified=false;
 
     public User(String email,String password, String name, String lastName, String phoneNumber) {
         this.email = email;
@@ -35,6 +41,7 @@ public class User implements UserDetails {
         this.name = name;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
+        this.emailVerificationToken=UUID.randomUUID().toString();
     }
 
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL )
@@ -55,6 +62,7 @@ public class User implements UserDetails {
         this.lastName=signUpRequest.getLastName();
         this.phoneNumber=signUpRequest.getPhoneNumber();
         this.password=signUpRequest.getPassword();
+        this.emailVerificationToken=UUID.randomUUID().toString();
     }
 
     @Override

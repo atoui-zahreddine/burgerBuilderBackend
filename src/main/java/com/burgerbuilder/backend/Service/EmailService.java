@@ -1,5 +1,6 @@
 package com.burgerbuilder.backend.Service;
 
+import com.burgerbuilder.backend.Model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -40,15 +41,24 @@ public class EmailService {
         mailSender.send(message);
     }
     @Async
-    public void sendPasswordResetMail(String to, Context context) throws MessagingException {
-        String html=template.process(PASSWORD_RESET_EMAIL_TEMPLATE,context);
-        sendMail(to,PASSWORD_RESET_EMAIL_SUBJECT,html);
+    public void sendPasswordResetMail(User user,String token) throws MessagingException {
+
+        String html=template.process(PASSWORD_RESET_EMAIL_TEMPLATE,createContext(user.getName(),token));
+        sendMail(user.getEmail(),PASSWORD_RESET_EMAIL_SUBJECT,html);
     }
 
     @Async
-    public void sendEmailVerificationMail(String to,Context context) throws MessagingException {
-        String html=template.process(PASSWORD_RESET_EMAIL_TEMPLATE,context);
-        sendMail(to,PASSWORD_RESET_EMAIL_SUBJECT,html);
+    public void sendEmailVerificationMail(User user) throws MessagingException {
+
+        String html=template.process(PASSWORD_RESET_EMAIL_TEMPLATE,createContext(user.getName(),user.getEmailVerificationToken()));
+        sendMail(user.getEmail(),PASSWORD_RESET_EMAIL_SUBJECT,html);
+    }
+
+    private Context createContext(String name,String token){
+        var context=new Context();
+        context.setVariable("token", token);
+        context.setVariable("name",name);
+        return context;
     }
 
 }
