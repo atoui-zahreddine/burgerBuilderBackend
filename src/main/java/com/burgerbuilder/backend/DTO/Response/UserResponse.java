@@ -18,14 +18,15 @@ public class UserResponse {
     private String email;
     private String name;
     private String lastName;
-    private List<String> authority=new ArrayList<>();
+    private List<String> authorities=new ArrayList<>();
 
     public UserResponse(User user) {
         this.email=user.getEmail();
         this.userId=user.getId().toString();
         this.name=user.getName();
         this.lastName=user.getLastName();
-        this.authority=user.getAuthorities().stream()
+        this.authorities=user.getAuthorities()
+                .stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
     }
