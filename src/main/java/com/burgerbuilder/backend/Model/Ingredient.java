@@ -1,21 +1,22 @@
 package com.burgerbuilder.backend.Model;
 
-import lombok.Data;
-import org.hibernate.annotations.Type;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
-@Data
+@Getter
+@Setter
 @Entity
 public class Ingredient {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Type(type="uuid-char")
-    private UUID id;
     private String name;
     private Float price;
 
@@ -28,6 +29,7 @@ public class Ingredient {
     }
 
     @OneToMany(mappedBy = "ingredient",cascade = CascadeType.ALL)
+    @JsonIgnore
     private Set<OrderedIngredients> orderedIngredients=new HashSet<>();
 
 

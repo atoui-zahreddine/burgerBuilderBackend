@@ -35,7 +35,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .and()
             .authorizeRequests()
             .mvcMatchers(HttpMethod.POST,"/auth/**","/users","/users/","**/reset-password*","**/email-token-verification").permitAll()
+            .mvcMatchers(HttpMethod.GET,"/actuator/**").permitAll()
             .anyRequest().authenticated()
+
             .and()
             .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(authExceptionHandlerFilter,AuthFilter.class);

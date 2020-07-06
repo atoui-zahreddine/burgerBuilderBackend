@@ -28,4 +28,5 @@ public class ErrorResponse {
         this.errors = errors;
         this.uri = uri;
     }
+
 }

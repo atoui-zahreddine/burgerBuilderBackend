@@ -1,30 +1,44 @@
 package com.burgerbuilder.backend.Model;
 
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.Type;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.io.Serializable;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity(name="order_ingredient")
+
 public class OrderedIngredients implements Serializable {
 
+
     @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    @JsonIgnore
+    private Long id;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @Type(type="uuid-char")
+    @JsonIgnore
     private Order order;
 
-    @Id
+
     @ManyToOne(fetch = FetchType.LAZY)
+//    @JsonIgnoreProperties("orderedIngredients")
+    @JsonIgnore
     private Ingredient ingredient;
 
-    private Byte quantite;
+    private Integer quantity;
 
-
-
+    public OrderedIngredients(Ingredient ingredient,Order order,Integer quantity ){
+        this.ingredient=ingredient;
+        this.order=order;
+        this.quantity=quantity;
+    }
 }

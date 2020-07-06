@@ -51,12 +51,12 @@ public class Seeds implements CommandLineRunner {
             address.setUser(user);
             user.setAddresses(List.of(address));
             userRepository.save(user);
-            List<Ingredient> ingredients =List.of(new Ingredient("bacon",800.00f),
-                    new Ingredient("cheese",800.00f),
-                    new Ingredient("meal",800.00f),
-                    new Ingredient("salad",800.00f));
+            List<Ingredient> ingredients =List.of(new Ingredient("bacon",0.7f),
+                    new Ingredient("cheese",0.4f),
+                    new Ingredient("meat",1.30f),
+                    new Ingredient("salad",0.5f));
             ingredients.forEach(ingredientRepository::save);
-            productRepository.save(new Product("burger",4000.00f));
+            productRepository.save(new Product("burger",4.00f));
         }
 
     }
