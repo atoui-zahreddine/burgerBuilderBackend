@@ -11,6 +11,7 @@ import com.burgerbuilder.backend.Utils.JwtUtils.JwtUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -42,6 +43,9 @@ public class UserService implements UserDetailsService {
     private  JwtUtils jwtUtils;
     @Autowired
     private EmailService emailService;
+
+    @Value("${auth.expiration}")
+    private String tokenExpiration;
 
 
     @Override
@@ -85,7 +89,8 @@ public class UserService implements UserDetailsService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         Map<String,String> response=new HashMap<>();
-        response.put("Token", jwtUtils.generateToken((User)authentication.getPrincipal()));
+        response.put("token", jwtUtils.generateToken((User)authentication.getPrincipal()));
+        response.put("expiresIn",tokenExpiration);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
