@@ -40,6 +40,7 @@ public class EmailService {
         helper.setText(body,true);
         mailSender.send(message);
     }
+
     @Async
     public void sendPasswordResetMail(User user,String token) throws MessagingException {
 

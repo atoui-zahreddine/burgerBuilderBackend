@@ -1,6 +1,7 @@
 package com.burgerbuilder.backend.Controller;
 
 import com.burgerbuilder.backend.DTO.Request.SignInRequest;
+import com.burgerbuilder.backend.DTO.Request.SignUpRequest;
 import com.burgerbuilder.backend.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,10 @@ public class AuthController {
         return userService.login(request);
     }
 
+    @PostMapping({"/signup","/signup/"})
+    public ResponseEntity<?> createUser(@Valid @RequestBody SignUpRequest request){
+        return userService.createUser(request);
+    }
 
 
 }

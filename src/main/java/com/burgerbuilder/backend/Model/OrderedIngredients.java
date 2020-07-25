@@ -1,7 +1,6 @@
 package com.burgerbuilder.backend.Model;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,18 +19,14 @@ public class OrderedIngredients implements Serializable {
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
-    @JsonIgnore
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @Type(type="uuid-char")
-    @JsonIgnore
     private Order order;
 
 
     @ManyToOne(fetch = FetchType.LAZY)
-//    @JsonIgnoreProperties("orderedIngredients")
-    @JsonIgnore
     private Ingredient ingredient;
 
     private Integer quantity;

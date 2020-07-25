@@ -125,16 +125,11 @@ public class UserService implements UserDetailsService {
 
     public ResponseEntity<?> validatePasswordReset(UUID token, String newPassword){
 
-        Optional<PasswordToken> passwordToken=tokenRepository.findByTokenAndExpireDateAfter(token,new Date());
+        PasswordToken passwordToken=tokenRepository.findByTokenAndExpireDateAfter(token,new Date())
+                            .orElseThrow(()->new NotFoundException(404,"the token is expired or invalid ."));
 
-        if(!passwordToken.isPresent()){
-            throw new NotFoundException(404,"the token is expired or invalid .");
-        }
-
-        Optional<User> user=userRepository.findById(passwordToken.get().getUser().getId());
-        user.get().setPassword(passwordEncoder.encode(newPassword));
-        userRepository.save(user.get());
-        tokenRepository.deleteByUserId(user.get().getId().toString());
+        userRepository.updateUserPassword(passwordEncoder.encode(newPassword));
+        tokenRepository.deleteByUserId(passwordToken.getUser().getId().toString());
         return new ResponseEntity<>(Map.of("Status","Ok"),HttpStatus.OK);
     }
 
@@ -153,16 +148,14 @@ public class UserService implements UserDetailsService {
     }
 
     public ResponseEntity<?> verifyEmailAddressToken(EmailValidationRequest request) {
-        var user=userRepository.getUserByEmailVerificationToken(request.getToken());
-        if(!user.isPresent())
-            throw new NotFoundException(201,"this token doesn't exist or the email address is verified.");
-        if(user.get().isEmailVerified())
-            throw new BadRequestException("this email is verified.",400);
+        var user=userRepository.getUserByEmailVerificationToken(request.getToken())
+                .orElseThrow(()->new NotFoundException(201,"this token doesn't exist " +
+                        "or the email address is verified."));
 
-        user.get().setEmailVerificationToken(null);
-        user.get().setEmailVerified(true);
+        user.setEmailVerificationToken(null);
+        user.setEmailVerified(true);
 
-        userRepository.save(user.get());
+        userRepository.save(user);
 
         return new ResponseEntity<>(Map.of("Status","OK"),HttpStatus.OK);
     }

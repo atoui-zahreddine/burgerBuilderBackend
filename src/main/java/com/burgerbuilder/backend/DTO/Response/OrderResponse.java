@@ -26,7 +26,9 @@ public class OrderResponse {
         isPayed=order.getIsPayed();
         order.getIngredients()
                 .stream()
-                .map(orderedIngredients -> Map.of(orderedIngredients.getIngredient().getName(), orderedIngredients.getQuantity()))
+                .map(orderedIngredients ->
+                        Map.of(orderedIngredients.getIngredient().getName(),
+                                orderedIngredients.getQuantity()))
                 .forEach(ingredient -> ingredients.putAll(ingredient));
     }
 }

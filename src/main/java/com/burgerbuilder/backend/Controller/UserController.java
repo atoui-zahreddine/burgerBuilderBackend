@@ -28,11 +28,6 @@ public class UserController {
     }
 
 
-    @PostMapping({"","/"})
-    public ResponseEntity<?> save(@Valid @RequestBody SignUpRequest request){
-        return userService.createUser(request);
-    }
-
     @PutMapping({"/password","/password"})
     public ResponseEntity<?> updatePassword(@Valid @RequestBody UpdatePasswordRequest request,
                                             @AuthenticationPrincipal User user){
