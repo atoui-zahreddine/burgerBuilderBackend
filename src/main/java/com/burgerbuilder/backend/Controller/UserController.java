@@ -1,6 +1,9 @@
 package com.burgerbuilder.backend.Controller;
 
-import com.burgerbuilder.backend.DTO.Request.*;
+import com.burgerbuilder.backend.DTO.Request.EmailValidationRequest;
+import com.burgerbuilder.backend.DTO.Request.ResetPasswordRequest;
+import com.burgerbuilder.backend.DTO.Request.ResetPasswordValidationRequest;
+import com.burgerbuilder.backend.DTO.Request.UpdatePasswordRequest;
 import com.burgerbuilder.backend.DTO.Response.UserResponse;
 import com.burgerbuilder.backend.Model.User;
 import com.burgerbuilder.backend.Service.UserService;
