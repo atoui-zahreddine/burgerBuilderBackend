@@ -58,24 +58,6 @@ public class UserService implements UserDetailsService {
         return user.get();
     }
 
-    public ResponseEntity<?> createUser(SignUpRequest signUpRequest) {
-
-        if(userRepository.getUserByEmail(signUpRequest.getEmail()).isPresent()){
-            throw new ResourceExistException(115,"email already exist !");
-        }
-        signUpRequest.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
-        var user =new User(signUpRequest);
-        user.addAuthority("ROLE_USER");
-        user =userRepository.save(user);
-        try {
-            emailService.sendEmailVerificationMail(user);
-        } catch (MessagingException e) {
-            logger.error("error with sending email verification mail .");
-        }
-        var response=new UserResponse(user);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
     public ResponseEntity<?> login(SignInRequest request) throws BadCredentialsException,NotFoundException{
         Authentication authentication;
         try{
@@ -91,6 +73,24 @@ public class UserService implements UserDetailsService {
         Map<String,String> response=new HashMap<>();
         response.put("token", jwtUtils.generateToken((User)authentication.getPrincipal()));
         response.put("expiresIn",tokenExpiration);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    public ResponseEntity<?> createUser(SignUpRequest signUpRequest) {
+
+        if(userRepository.getUserByEmail(signUpRequest.getEmail()).isPresent()){
+            throw new ResourceExistException(115,"email already exist !");
+        }
+        signUpRequest.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
+        var user =new User(signUpRequest);
+        user.addAuthority("ROLE_USER");
+        user =userRepository.save(user);
+        try {
+            emailService.sendEmailVerificationMail(user);
+        } catch (MessagingException e) {
+            logger.error("error with sending email verification mail .");
+        }
+        var response=new UserResponse(user);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -129,7 +129,7 @@ public class UserService implements UserDetailsService {
                             .orElseThrow(()->new NotFoundException(404,"the token is expired or invalid ."));
 
         userRepository.updateUserPassword(passwordEncoder.encode(newPassword));
-        tokenRepository.deleteByUserId(passwordToken.getUser().getId().toString());
+        tokenRepository.deleteByUserId(passwordToken.getUser().getId());
         return new ResponseEntity<>(Map.of("Status","Ok"),HttpStatus.OK);
     }
 
