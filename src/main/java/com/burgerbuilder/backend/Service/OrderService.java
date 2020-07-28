@@ -41,6 +41,7 @@ public class OrderService {
         for(Map.Entry<String, Integer> ingredient : request.getIngredients().entrySet()){
             Ingredient ing=ingredientRepository.findById(ingredient.getKey())
                     .orElseThrow(() -> new NotFoundException(212,"no ingredient with this name :"+ingredient.getKey()));
+            ing.setOrderedIngredients(orderedIngredients);
             orderedIngredients.add(new OrderedIngredients(ing,order,ingredient.getValue()));
         }
 

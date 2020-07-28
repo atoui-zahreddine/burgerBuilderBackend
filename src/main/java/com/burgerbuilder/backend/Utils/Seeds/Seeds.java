@@ -14,6 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 @Component
 public class Seeds implements CommandLineRunner {
@@ -51,11 +52,13 @@ public class Seeds implements CommandLineRunner {
             address.setUser(user);
             user.setAddresses(List.of(address));
             userRepository.save(user);
-            List<Ingredient> ingredients =List.of(new Ingredient("bacon",0.7f),
+            Stream.of(
+                    new Ingredient("bacon",0.7f),
                     new Ingredient("cheese",0.4f),
                     new Ingredient("meat",1.30f),
-                    new Ingredient("salad",0.5f));
-            ingredients.forEach(ingredientRepository::save);
+                    new Ingredient("salad",0.5f)
+                ).forEach(ingredientRepository::save);
+
             productRepository.save(new Product("burger",4.00f));
         }
 
