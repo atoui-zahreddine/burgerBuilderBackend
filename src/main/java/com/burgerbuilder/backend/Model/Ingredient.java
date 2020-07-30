@@ -3,6 +3,7 @@ package com.burgerbuilder.backend.Model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.domain.Persistable;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -14,7 +15,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
-public class Ingredient {
+public class Ingredient implements Persistable<String> {
 
     @Id
     private String name;
@@ -33,4 +34,13 @@ public class Ingredient {
     private Set<OrderedIngredients> orderedIngredients=new HashSet<>();
 
 
+    @Override
+    public String getId() {
+        return name;
+    }
+
+    @Override
+    public boolean isNew() {
+        return name!=null;
+    }
 }

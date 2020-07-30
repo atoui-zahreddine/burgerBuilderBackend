@@ -8,14 +8,13 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
-import java.io.Serializable;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @Entity(name="order_ingredient")
 
-public class OrderedIngredients implements Serializable {
+public class OrderedIngredients  {
 
 
     @Id

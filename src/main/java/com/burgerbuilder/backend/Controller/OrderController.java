@@ -1,9 +1,11 @@
 package com.burgerbuilder.backend.Controller;
 
 import com.burgerbuilder.backend.DTO.Request.OrderRequest;
+import com.burgerbuilder.backend.Model.User;
 import com.burgerbuilder.backend.Service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -12,7 +14,7 @@ import javax.validation.Valid;
 @RestController
 public class OrderController {
 
-    private OrderService orderService;
+    private final OrderService orderService;
 
     @Autowired
     public OrderController(OrderService orderService) {
@@ -25,12 +27,18 @@ public class OrderController {
     }
 
     @GetMapping({"/",""})
-    public ResponseEntity<?> getAll(){
-        return orderService.getAll();
+    public ResponseEntity<?> getAllOrdersByUser(@AuthenticationPrincipal User user){
+        return orderService.getAllUserOrders(user);
     }
 
     @GetMapping({"/{id}","/{id}/"})
-    public ResponseEntity<?> getOrderById(@PathVariable("id") String id){
-        return orderService.getOrderById(id);
+    public ResponseEntity<?> getUserOrderById(@PathVariable("id") String id, @AuthenticationPrincipal User user){
+        return orderService.getUserOrderById(id,user);
+    }
+
+    @PutMapping({"/{id}","/{id}/"})
+    public ResponseEntity<?> updateOrderById(@PathVariable("id") String id , @Valid @RequestBody OrderRequest newOrder,
+                                         @AuthenticationPrincipal User user){
+        return orderService.updateOrderById(id , newOrder,user);
     }
 }

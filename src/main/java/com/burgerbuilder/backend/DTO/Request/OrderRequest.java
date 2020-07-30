@@ -4,6 +4,7 @@ import com.burgerbuilder.backend.Utils.IngredientQuantityNotZero;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.constraints.NotEmpty;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,5 +12,6 @@ import java.util.Map;
 @Setter
 public class OrderRequest {
     @IngredientQuantityNotZero
+    @NotEmpty
     private Map<String,Integer> ingredients =new HashMap<>();
 }

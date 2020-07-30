@@ -18,9 +18,9 @@ public class OrderResponse {
     private UUID userId;
     private float totalPrice;
 
-    public OrderResponse(Order order, UUID userId) {
+    public OrderResponse(Order order) {
         id=order.getId();
-        this.userId=userId;
+        this.userId=order.getUser().getId();
         totalPrice=order.getPrice();
         status=order.getStatus();
         isPayed=order.getIsPayed();
