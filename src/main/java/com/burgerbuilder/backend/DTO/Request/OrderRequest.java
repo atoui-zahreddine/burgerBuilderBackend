@@ -1,6 +1,6 @@
 package com.burgerbuilder.backend.DTO.Request;
 
-import com.burgerbuilder.backend.Utils.IngredientQuantityNotZero;
+import com.burgerbuilder.backend.Utils.Validation.Constraints.IngredientQuantityNotZero;
 import lombok.Getter;
 import lombok.Setter;
 

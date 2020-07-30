@@ -13,7 +13,6 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor
 @Entity(name="order_ingredient")
-
 public class OrderedIngredients  {
 
 

@@ -22,8 +22,8 @@ public class OrderController {
     }
 
     @PostMapping({"/",""})
-    public ResponseEntity<?> createOrder(@Valid @RequestBody OrderRequest request){
-        return orderService.createOrder(request);
+    public ResponseEntity<?> createOrder(@Valid @RequestBody OrderRequest request,@AuthenticationPrincipal User user){
+        return orderService.createOrder(request,user);
     }
 
     @GetMapping({"/",""})

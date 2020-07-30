@@ -9,7 +9,7 @@ public class AuthorizationException extends ApiBaseException{
 
     @Override
     public HttpStatus getHttpStatus() {
-        return HttpStatus.BAD_REQUEST;
+        return HttpStatus.FORBIDDEN;
     }
 
     @Override

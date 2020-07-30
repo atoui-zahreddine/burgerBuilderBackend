@@ -12,7 +12,6 @@ import com.burgerbuilder.backend.Repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -37,7 +36,7 @@ public class OrderService {
         this.orderedIngredientsRepository = orderedIngredientsRepository;
     }
 
-    public ResponseEntity<?> createOrder(OrderRequest request){
+    public ResponseEntity<?> createOrder(OrderRequest request,User user){
 
         Order order=new Order();
         Set<OrderedIngredients> orderedIngredients=new HashSet<>();
@@ -57,7 +56,7 @@ public class OrderService {
                 .reduce(0,Double::sum);
 
         order.setIngredients(orderedIngredients);
-        order.setUser((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        order.setUser(user);
         order.setPrice(price);
         order.setProduct(product);
         orderRepository.save(order);

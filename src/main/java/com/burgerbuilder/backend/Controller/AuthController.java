@@ -23,7 +23,7 @@ public class AuthController {
         this.userService = userService;
     }
 
-    @PostMapping({"/signin","singin/"})
+    @PostMapping({"/signin","/singin/"})
     public ResponseEntity<?> login(@Valid @RequestBody SignInRequest request){
         return userService.login(request);
     }

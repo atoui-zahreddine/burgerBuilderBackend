@@ -1,7 +1,5 @@
 package com.burgerbuilder.backend.Model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Type;
@@ -24,11 +22,9 @@ public class Order {
     private Float price;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties("orders")
     private Product product;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnore
     private User user;
 
     @OneToMany(mappedBy = "order",cascade = CascadeType.ALL)

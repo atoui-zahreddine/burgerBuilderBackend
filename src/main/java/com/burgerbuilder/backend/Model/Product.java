@@ -1,6 +1,5 @@
 package com.burgerbuilder.backend.Model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.hibernate.annotations.Type;
 
@@ -28,7 +27,6 @@ public class Product {
     }
 
     @OneToMany(mappedBy = "product",cascade = CascadeType.ALL)
-    @JsonIgnore
     private Set<Order> orders=new HashSet<>();
 
 

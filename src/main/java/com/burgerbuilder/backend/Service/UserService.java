@@ -133,7 +133,6 @@ public class UserService implements UserDetailsService {
         return new ResponseEntity<>(Map.of("Status","Ok"),HttpStatus.OK);
     }
 
-
     public ResponseEntity<?> sendEmailVerificationToken(User user){
         if(user.isEmailVerified() && user.getEmailVerificationToken()==null)
             throw new BadRequestException("this email is already verified.",400);

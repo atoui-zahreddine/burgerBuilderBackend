@@ -26,8 +26,7 @@ public class UserController {
 
     @GetMapping({"/current","/current/"})
     public ResponseEntity<?> getCurrentUser(@AuthenticationPrincipal User principal){
-        var response=new UserResponse(principal);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(new UserResponse(principal), HttpStatus.OK);
     }
 
 
@@ -44,18 +43,17 @@ public class UserController {
 
     @PostMapping("/reset-password-validation")
     public ResponseEntity<?> validatePasswordReset(@Valid @RequestBody ResetPasswordValidationRequest request){
-
         return userService.validatePasswordReset(UUID.fromString(request.getToken()),request.getNewPassword());
-    }
-
-    @PostMapping("/email-token-verification")
-    public ResponseEntity<?> verifyEmailAddressToken(@Valid @RequestBody EmailValidationRequest request){
-        return userService.verifyEmailAddressToken(request);
     }
 
     @GetMapping("/email-verification")
     public ResponseEntity<?> sendEmailVerificationToken(@AuthenticationPrincipal User user){
         return userService.sendEmailVerificationToken(user);
+    }
+
+    @PostMapping("/email-token-verification")
+    public ResponseEntity<?> verifyEmailAddressToken(@Valid @RequestBody EmailValidationRequest request){
+        return userService.verifyEmailAddressToken(request);
     }
 
 }

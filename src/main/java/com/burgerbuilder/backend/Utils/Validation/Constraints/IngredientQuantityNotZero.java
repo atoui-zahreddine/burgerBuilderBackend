@@ -1,6 +1,8 @@
-package com.burgerbuilder.backend.Utils;
+package com.burgerbuilder.backend.Utils.Validation.Constraints;
 
 
+
+import com.burgerbuilder.backend.Utils.Validation.Validators.IngredientQuantityNotZeroValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;

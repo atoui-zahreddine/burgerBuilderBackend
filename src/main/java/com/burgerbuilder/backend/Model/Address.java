@@ -1,6 +1,6 @@
 package com.burgerbuilder.backend.Model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.hibernate.annotations.Type;
 
@@ -20,8 +20,7 @@ public class Address {
     private String City;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    @JsonIgnoreProperties("addresses")
+    @JsonIgnore
     private User user;
 
     

@@ -1,6 +1,5 @@
 package com.burgerbuilder.backend.Model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.domain.Persistable;
@@ -30,7 +29,6 @@ public class Ingredient implements Persistable<String> {
     }
 
     @OneToMany(mappedBy = "ingredient",cascade = CascadeType.ALL)
-    @JsonIgnore
     private Set<OrderedIngredients> orderedIngredients=new HashSet<>();
 
 
