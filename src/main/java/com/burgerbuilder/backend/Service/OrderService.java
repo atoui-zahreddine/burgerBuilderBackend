@@ -109,8 +109,7 @@ public class OrderService {
 
         if(order.getStatus().equals("preparing"))
             throw new AuthorizationException("you can't delete an order when his status=preparing",403);
-
-        orderRepository.delete(order);
-        return  new ResponseEntity<>(Map.of("status","deleted"),HttpStatus.NO_CONTENT);
+        orderRepository.deleteOrderById(order.getId());
+        return  new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

@@ -2,6 +2,8 @@ package com.burgerbuilder.backend.Model;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
@@ -28,6 +30,7 @@ public class Order {
     private User user;
 
     @OneToMany(mappedBy = "order",cascade = CascadeType.ALL)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<OrderedIngredients> ingredients=new HashSet<>();
 
 
