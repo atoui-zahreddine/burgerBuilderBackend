@@ -2,7 +2,7 @@ package com.burgerbuilder.backend.Service;
 
 import com.burgerbuilder.backend.DTO.Request.OrderRequest;
 import com.burgerbuilder.backend.DTO.Response.OrderResponse;
-import com.burgerbuilder.backend.Exception.BadRequestException;
+import com.burgerbuilder.backend.Exception.AuthorizationException;
 import com.burgerbuilder.backend.Exception.NotFoundException;
 import com.burgerbuilder.backend.Model.*;
 import com.burgerbuilder.backend.Repository.IngredientRepository;
@@ -39,13 +39,7 @@ public class OrderService {
     public ResponseEntity<?> createOrder(OrderRequest request,User user){
 
         Order order=new Order();
-        Set<OrderedIngredients> orderedIngredients=new HashSet<>();
-
-        for(Map.Entry<String, Integer> ingredient : request.getIngredients().entrySet()){
-            Ingredient ing=ingredientRepository.findById(ingredient.getKey())
-                    .orElseThrow(() -> new NotFoundException(212,"no ingredient with this name :"+ingredient.getKey()));
-            orderedIngredients.add(new OrderedIngredients(ing,order,ingredient.getValue()));
-        }
+        Set<OrderedIngredients> orderedIngredients=getOrderedIngredients(request, order);
 
         Product product=productRepository.findProductByName("burger")
                 .orElseThrow(() -> new NotFoundException(130,"no product with this name"));
@@ -61,7 +55,18 @@ public class OrderService {
         order.setProduct(product);
         orderRepository.save(order);
 
-        return new ResponseEntity<>(Map.of("status","created"), HttpStatus.OK);
+        return new ResponseEntity<>(Map.of("status","created"), HttpStatus.CREATED);
+    }
+
+    private Set<OrderedIngredients> getOrderedIngredients(OrderRequest request, Order order) throws NotFoundException{
+        Set<OrderedIngredients> orderedIngredients = new HashSet<>() ;
+
+        for(Map.Entry<String, Integer> ingredient : request.getIngredients().entrySet()){
+            Ingredient ing=ingredientRepository.findById(ingredient.getKey())
+                    .orElseThrow(() -> new NotFoundException(212,"no ingredient with this name :"+ingredient.getKey()));
+            orderedIngredients.add(new OrderedIngredients(ing, order,ingredient.getValue()));
+        }
+        return orderedIngredients;
     }
 
     public ResponseEntity<?> getAllUserOrders(User user){
@@ -72,19 +77,22 @@ public class OrderService {
         return new ResponseEntity<>(orders,HttpStatus.OK);
     }
 
+    private Order getOrderByIdAndUser(String id, User user) {
+        return orderRepository.findOrderByIdAndUser(UUID.fromString(id), user)
+                .orElseThrow(() -> new NotFoundException(404, "no order with this id :" + id));
+    }
+
     public ResponseEntity<?> getUserOrderById(String id,User user) {
-        var order=orderRepository.findOrderByIdAndUser(UUID.fromString(id),user)
-                .orElseThrow( () -> new NotFoundException(120,"no order with this id :"+id));
+        var order= getOrderByIdAndUser(id,user);
 
         return new ResponseEntity<>(new OrderResponse(order),HttpStatus.OK);
     }
 
     public ResponseEntity<?> updateOrderById(String orderId, OrderRequest newOrder, User user) {
-        var order=orderRepository.findOrderByIdAndUser(UUID.fromString(orderId),user)
-                .orElseThrow(()-> new NotFoundException(404,"no order with this id "+orderId));
+        var order= getOrderByIdAndUser(orderId, user);
 
         if (order.getStatus().equals("preparing"))
-            throw new BadRequestException("you can't update an order when his status=preparing",400);
+            throw new AuthorizationException("you can't update an order when his status=preparing",403);
 
         newOrder.getIngredients().forEach((ingredientName, newQuantity) -> {
             ingredientRepository.findById(ingredientName)
@@ -94,5 +102,15 @@ public class OrderService {
         });
 
         return new ResponseEntity<>(Map.of("status","updated"),HttpStatus.OK);
+    }
+
+    public ResponseEntity<?> deleteOrderById(String id, User user) {
+        var order = getOrderByIdAndUser(id,user);
+
+        if(order.getStatus().equals("preparing"))
+            throw new AuthorizationException("you can't delete an order when his status=preparing",403);
+
+        orderRepository.delete(order);
+        return  new ResponseEntity<>(Map.of("status","deleted"),HttpStatus.NO_CONTENT);
     }
 }
