@@ -41,4 +41,9 @@ public class OrderController {
                                          @AuthenticationPrincipal User user){
         return orderService.updateOrderById(id , newOrder,user);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteOrderById(@PathVariable String id,@AuthenticationPrincipal User user){
+        return orderService.deleteOrderById(id,user);
+    }
 }
