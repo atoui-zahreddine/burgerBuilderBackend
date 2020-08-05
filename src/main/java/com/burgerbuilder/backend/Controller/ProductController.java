@@ -22,14 +22,10 @@ public class ProductController {
     public ResponseEntity<?> createProduct( @RequestBody @Valid ProductRequest request){
         return productService.createProduct(request);
     }
+
     @GetMapping("")
     public ResponseEntity<?> getAllProducts(){
         return productService.getAllProducts();
-    }
-
-    @GetMapping("/")
-    public ResponseEntity<?> getProductByName(@RequestParam("name")  String productName){
-        return productService.getProductByName(productName);
     }
 
     @GetMapping("/{productId}")
@@ -37,9 +33,14 @@ public class ProductController {
         return productService.getProductById(productId);
     }
 
-    @PutMapping("/")
-    public ResponseEntity<?> updateProductByName(@RequestParam("name") String productName,@RequestBody ProductRequest request){
-        return productService.updateProductByName(productName,request);
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateProductById(@RequestBody ProductRequest request,@PathVariable String id){
+        return productService.updateProductById(id,request);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteProductById(@PathVariable String id){
+        return productService.deleteProductById(id);
     }
 
 }
