@@ -1,7 +1,10 @@
 package com.burgerbuilder.backend.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.domain.Persistable;
 
 import javax.persistence.CascadeType;
@@ -28,17 +31,21 @@ public class Ingredient implements Persistable<String> {
     public Ingredient() {
     }
 
-    @OneToMany(mappedBy = "ingredient",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "ingredient",cascade = {CascadeType.PERSIST,CascadeType.MERGE})
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonIgnore
     private Set<OrderedIngredients> orderedIngredients=new HashSet<>();
 
 
     @Override
+    @JsonIgnore
     public String getId() {
         return name;
     }
 
     @Override
+    @JsonIgnore
     public boolean isNew() {
-        return name!=null;
+        return name==null;
     }
 }
