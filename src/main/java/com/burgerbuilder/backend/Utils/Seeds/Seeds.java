@@ -48,7 +48,7 @@ public class Seeds implements CommandLineRunner {
             Address address=new Address();
             address.setCity("medenine");
             address.setStreet("26 rue imam chafei");
-            address.setZipCode("4100");
+            address.setZipCode(4100);
             address.setUser(user);
             user.setAddresses(List.of(address));
             userRepository.save(user);

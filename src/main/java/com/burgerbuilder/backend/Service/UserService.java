@@ -29,7 +29,7 @@ import java.util.*;
 @Service
 public class UserService implements UserDetailsService {
 
-    private Logger logger= LoggerFactory.getLogger(UserService.class);
+    private final Logger logger= LoggerFactory.getLogger(UserService.class);
 
     @Autowired
     private  UserRepository userRepository;
