@@ -50,4 +50,9 @@ public class AuthFilter extends OncePerRequestFilter {
         filterChain.doFilter(request,response);
     }
 
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        return PublicURI.getPublicUri().matches(request);
+    }
+
 }

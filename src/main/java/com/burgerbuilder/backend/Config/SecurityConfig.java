@@ -2,6 +2,7 @@ package com.burgerbuilder.backend.Config;
 
 import com.burgerbuilder.backend.Security.AuthExceptionHandlerFilter;
 import com.burgerbuilder.backend.Security.AuthFilter;
+import com.burgerbuilder.backend.Security.PublicURI;
 import com.burgerbuilder.backend.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -39,7 +40,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
             .authorizeRequests()
-            .mvcMatchers(HttpMethod.POST,"/auth/**","/users","/users/","**/reset-password*","**/email-token-verification").permitAll()
+            .requestMatchers(PublicURI.getPublicUri()).permitAll()
             .mvcMatchers(HttpMethod.OPTIONS,"/**").permitAll()
             .anyRequest().authenticated()
 
