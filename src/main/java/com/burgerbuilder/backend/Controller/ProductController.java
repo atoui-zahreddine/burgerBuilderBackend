@@ -4,6 +4,7 @@ import com.burgerbuilder.backend.DTO.Request.ProductRequest;
 import com.burgerbuilder.backend.Service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -19,6 +20,7 @@ public class ProductController {
     }
 
     @PostMapping("")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> createProduct( @RequestBody @Valid ProductRequest request){
         return productService.createProduct(request);
     }
@@ -34,11 +36,13 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> updateProductById(@RequestBody ProductRequest request,@PathVariable String id){
         return productService.updateProductById(id,request);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> deleteProductById(@PathVariable String id){
         return productService.deleteProductById(id);
     }
