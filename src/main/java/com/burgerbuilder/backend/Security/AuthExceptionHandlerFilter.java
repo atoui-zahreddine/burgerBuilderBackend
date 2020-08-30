@@ -2,8 +2,7 @@ package com.burgerbuilder.backend.Security;
 
 import com.burgerbuilder.backend.DTO.Response.ErrorResponse;
 import com.burgerbuilder.backend.Exception.ApiBaseException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.burgerbuilder.backend.Utils.Utils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -26,15 +25,9 @@ public class AuthExceptionHandlerFilter extends OncePerRequestFilter {
                     240, Map.of("error",ex.getMessage()),request.getRequestURI());
             response.setStatus(HttpStatus.FORBIDDEN.value());
             response.setHeader("Content-Type","application/json");
-            response.getWriter().write(convertObjectToJson(errorResponse));
+            response.getWriter().write(Utils.convertObjectToJson(errorResponse));
         }
     }
 
-    private String convertObjectToJson(ErrorResponse errorResponse) throws JsonProcessingException {
-        if (errorResponse == null) {
-            return null;
-        }
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.writeValueAsString(errorResponse);
-    }
+
 }
