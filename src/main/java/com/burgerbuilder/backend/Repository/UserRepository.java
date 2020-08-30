@@ -23,4 +23,9 @@ public interface UserRepository  extends JpaRepository<User, UUID> {
     @Modifying
     @Query("update User u set u.password=:password")
     void updateUserPassword(@Param("password") String password);
+
+    @Transactional
+    @Modifying
+    @Query(nativeQuery = true, value = "insert into authority values (?1)")
+    void addAuthority(@Param("authority") String authority);
 }

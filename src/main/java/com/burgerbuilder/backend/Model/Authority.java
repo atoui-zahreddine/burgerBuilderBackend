@@ -3,33 +3,44 @@ package com.burgerbuilder.backend.Model;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.Type;
+import org.springframework.data.domain.Persistable;
 import org.springframework.security.core.GrantedAuthority;
 
-import javax.persistence.*;
-import java.util.UUID;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
-public class Authority implements GrantedAuthority {
+public class Authority implements GrantedAuthority, Persistable<String> {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Type(type="uuid-char")
-    private UUID id;
     private String authority;
-    @ManyToOne(fetch = FetchType.LAZY)
-    private User user;
+
+    @ManyToMany(mappedBy = "authorities")
+    private Set<User> users=new HashSet<>();
 
     public Authority(String authority,User user) {
         this.authority=authority;
-        this.user=user;
+        users.add(user);
     }
 
     @Override
     public String getAuthority() {
         return authority;
+    }
+
+    @Override
+    public String getId() {
+        return authority;
+    }
+
+    @Override
+    public boolean isNew() {
+        return !authority.isEmpty();
     }
 }

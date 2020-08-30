@@ -4,6 +4,7 @@ import com.burgerbuilder.backend.DTO.Request.*;
 import com.burgerbuilder.backend.DTO.Response.UserResponse;
 import com.burgerbuilder.backend.Exception.*;
 import com.burgerbuilder.backend.Model.PasswordToken;
+import com.burgerbuilder.backend.Model.Roles;
 import com.burgerbuilder.backend.Model.User;
 import com.burgerbuilder.backend.Repository.TokenRepository;
 import com.burgerbuilder.backend.Repository.UserRepository;
@@ -83,7 +84,7 @@ public class UserService implements UserDetailsService {
         }
         signUpRequest.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
         var user =new User(signUpRequest);
-        user.addAuthority("ROLE_USER");
+        user.addAuthority(Roles.ROLE_USER.toString());
         user =userRepository.save(user);
         try {
             emailService.sendEmailVerificationMail(user);
