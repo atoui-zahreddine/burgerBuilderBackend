@@ -24,8 +24,8 @@ public class Address {
     private UUID id;
     @NotBlank
     private String street;
-    @Min(value = 1000)
-    @Max(value=99999)
+    @Min(value = 1000,message = "must be between 1000 and 99999")
+    @Max(value=99999,message = "must be between 1000 and 99999")
     private Integer zipCode;
     @NotBlank
     private String City;

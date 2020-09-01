@@ -1,16 +1,16 @@
 package com.burgerbuilder.backend.Service;
 
 import com.burgerbuilder.backend.DTO.Request.IngredientRequest;
+import com.burgerbuilder.backend.DTO.Response.ApiResponse;
 import com.burgerbuilder.backend.Exception.NotFoundException;
 import com.burgerbuilder.backend.Exception.ResourceExistException;
 import com.burgerbuilder.backend.Model.Ingredient;
 import com.burgerbuilder.backend.Repository.IngredientRepository;
+import com.burgerbuilder.backend.Utils.Enums.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import java.util.Map;
 
 @Service
 public class IngredientService {
@@ -24,20 +24,21 @@ public class IngredientService {
 
 
     public ResponseEntity<?> createIngredient(IngredientRequest request) {
-
         checkIfIngredientExist(request.getName());
-
-        ingredientRepository.save(new Ingredient(request.getName(),request.getPrice()));
-        return new ResponseEntity<>(Map.of("status","created"),HttpStatus.CREATED);
+        var ingredient=ingredientRepository.save(new Ingredient(request.getName(),request.getPrice()));
+        var response=new ApiResponse<>(Status.SUCCESS,ingredient);
+        return new ResponseEntity<>(response,HttpStatus.CREATED);
     }
 
     public ResponseEntity<?> getAllIngredients() {
-        return new ResponseEntity<>(ingredientRepository.findAll(), HttpStatus.OK);
+        var response=new ApiResponse<>(Status.SUCCESS,ingredientRepository.findAll());
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     public ResponseEntity<?> getIngredientByName(String ingredientName) {
         var ingredient= findIngredientByName(ingredientName);
-        return new ResponseEntity<>(ingredient,HttpStatus.OK);
+        var response=new ApiResponse<>(Status.SUCCESS,ingredient);
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
     public ResponseEntity<?> updateIngredientByName(String ingredientName, IngredientRequest request) {
@@ -50,7 +51,8 @@ public class IngredientService {
             ingredient.setPrice(request.getPrice());
 
         ingredientRepository.updateById(ingredientName,ingredient.getName(),ingredient.getPrice());
-        return new ResponseEntity<>(Map.of("status","updated"),HttpStatus.OK);
+        var response=new ApiResponse<>(Status.SUCCESS,null);
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
     public ResponseEntity<?> deleteIngredientByName(String ingredientName){

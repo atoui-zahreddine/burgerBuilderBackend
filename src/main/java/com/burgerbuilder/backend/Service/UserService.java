@@ -1,13 +1,15 @@
 package com.burgerbuilder.backend.Service;
 
 import com.burgerbuilder.backend.DTO.Request.*;
+import com.burgerbuilder.backend.DTO.Response.ApiResponse;
 import com.burgerbuilder.backend.DTO.Response.UserResponse;
 import com.burgerbuilder.backend.Exception.*;
 import com.burgerbuilder.backend.Model.PasswordToken;
-import com.burgerbuilder.backend.Model.Roles;
 import com.burgerbuilder.backend.Model.User;
 import com.burgerbuilder.backend.Repository.TokenRepository;
 import com.burgerbuilder.backend.Repository.UserRepository;
+import com.burgerbuilder.backend.Utils.Enums.Roles;
+import com.burgerbuilder.backend.Utils.Enums.Status;
 import com.burgerbuilder.backend.Utils.JwtUtils.JwtUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,9 +73,10 @@ public class UserService implements UserDetailsService {
         }
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        Map<String,String> response=new HashMap<>();
-        response.put("token", jwtUtils.generateToken((User)authentication.getPrincipal()));
-        response.put("expiresIn",tokenExpiration);
+        Map<String,String> responseData=new HashMap<>();
+        responseData.put("token", jwtUtils.generateToken((User)authentication.getPrincipal()));
+        responseData.put("expiresIn",tokenExpiration);
+        var response=new ApiResponse<>(Status.SUCCESS,responseData);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -91,7 +94,7 @@ public class UserService implements UserDetailsService {
         } catch (MessagingException e) {
             logger.error("error with sending email verification mail .");
         }
-        var response=new UserResponse(user);
+        var response=new ApiResponse<>(Status.SUCCESS,new UserResponse(user));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -104,7 +107,8 @@ public class UserService implements UserDetailsService {
 
             user.setPassword(passwordEncoder.encode(request.getNewPassword()));
             userRepository.save(user);
-            return new ResponseEntity<>(Map.of("Status","Ok"),HttpStatus.OK);
+        var response=new ApiResponse<>(Status.SUCCESS,null);
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
     public void resetPassword(ResetPasswordRequest request) {
@@ -131,7 +135,8 @@ public class UserService implements UserDetailsService {
 
         userRepository.updateUserPassword(passwordEncoder.encode(newPassword));
         tokenRepository.deleteByUserId(passwordToken.getUser().getId());
-        return new ResponseEntity<>(Map.of("Status","Ok"),HttpStatus.OK);
+        var response=new ApiResponse<>(Status.SUCCESS,null);
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
     public ResponseEntity<?> sendEmailVerificationToken(User user){
@@ -143,8 +148,8 @@ public class UserService implements UserDetailsService {
         } catch (MessagingException e) {
             logger.error("error with sending email verification mail .");
         }
-
-    return new ResponseEntity<>(Map.of("Status","OK"),HttpStatus.OK);
+        var response=new ApiResponse<>(Status.SUCCESS,null);
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
     public ResponseEntity<?> verifyEmailAddressToken(EmailValidationRequest request) {
@@ -156,7 +161,7 @@ public class UserService implements UserDetailsService {
         user.setEmailVerified(true);
 
         userRepository.save(user);
-
-        return new ResponseEntity<>(Map.of("Status","OK"),HttpStatus.OK);
+        var response=new ApiResponse<>(Status.SUCCESS,null);
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 }

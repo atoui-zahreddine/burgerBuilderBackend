@@ -1,16 +1,17 @@
 package com.burgerbuilder.backend.Service;
 
 import com.burgerbuilder.backend.DTO.Request.ProductRequest;
+import com.burgerbuilder.backend.DTO.Response.ApiResponse;
 import com.burgerbuilder.backend.Exception.NotFoundException;
 import com.burgerbuilder.backend.Exception.ResourceExistException;
 import com.burgerbuilder.backend.Model.Product;
 import com.burgerbuilder.backend.Repository.ProductRepository;
+import com.burgerbuilder.backend.Utils.Enums.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
 import java.util.UUID;
 
 
@@ -27,19 +28,21 @@ public class ProductService {
             checkIfProductExist(request.getName());
 
             productRepository.save(new Product(request.getName(),request.getBasePrice()));
-            return new ResponseEntity<>(Map.of("status","success"),HttpStatus.CREATED);
+        var response=new ApiResponse<>(Status.SUCCESS,null);
+            return new ResponseEntity<>(response,HttpStatus.CREATED);
     }
 
     public ResponseEntity<?> getAllProducts() {
-        return new ResponseEntity<>(productRepository.findAll(),HttpStatus.OK);
+        var response=new ApiResponse<>(Status.SUCCESS,productRepository.findAll());
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
 
     public ResponseEntity<?> getProductById(String productId) {
         var product=productRepository.findById(UUID.fromString(productId))
                 .orElseThrow(() -> new NotFoundException(404,"no product with this name"+productId));
-
-        return new ResponseEntity<>(product,HttpStatus.OK);
+        var response=new ApiResponse<>(Status.SUCCESS,product);
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
     public ResponseEntity<?> updateProductById(String productId,ProductRequest request) {
@@ -53,7 +56,8 @@ public class ProductService {
             product.setName(request.getName());
 
         productRepository.updateProduct(UUID.fromString(productId),product.getName(),product.getBasePrice());
-        return new ResponseEntity<>(Map.of("status","updated"),HttpStatus.OK);
+        var response=new ApiResponse<>(Status.SUCCESS,null);
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
     public ResponseEntity<?> deleteProductById(String productId){
         if(!productRepository.existsById(UUID.fromString(productId)))

@@ -1,6 +1,7 @@
 package com.burgerbuilder.backend.Service;
 
 import com.burgerbuilder.backend.DTO.Request.OrderRequest;
+import com.burgerbuilder.backend.DTO.Response.ApiResponse;
 import com.burgerbuilder.backend.DTO.Response.OrderResponse;
 import com.burgerbuilder.backend.Exception.AuthorizationException;
 import com.burgerbuilder.backend.Exception.NotFoundException;
@@ -9,6 +10,7 @@ import com.burgerbuilder.backend.Repository.IngredientRepository;
 import com.burgerbuilder.backend.Repository.OrderRepository;
 import com.burgerbuilder.backend.Repository.OrderedIngredientsRepository;
 import com.burgerbuilder.backend.Repository.ProductRepository;
+import com.burgerbuilder.backend.Utils.Enums.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -54,8 +56,8 @@ public class OrderService {
         order.setPrice(price);
         order.setProduct(product);
         orderRepository.save(order);
-
-        return new ResponseEntity<>(Map.of("status","created"), HttpStatus.CREATED);
+        var response=new ApiResponse<>(Status.SUCCESS,null);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     private Set<OrderedIngredients> getOrderedIngredients(OrderRequest request, Order order) throws NotFoundException{
@@ -74,7 +76,8 @@ public class OrderService {
                     .stream()
                     .map(OrderResponse::new)
                     .collect(Collectors.toSet());
-        return new ResponseEntity<>(orders,HttpStatus.OK);
+        var response=new ApiResponse<>(Status.SUCCESS,orders);
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
     private Order getOrderByIdAndUser(String id, User user) {
@@ -84,8 +87,8 @@ public class OrderService {
 
     public ResponseEntity<?> getUserOrderById(String id,User user) {
         var order= getOrderByIdAndUser(id,user);
-
-        return new ResponseEntity<>(new OrderResponse(order),HttpStatus.OK);
+        var response=new ApiResponse<>(Status.SUCCESS,new OrderResponse(order));
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
     public ResponseEntity<?> updateOrderById(String orderId, OrderRequest newOrder, User user) {
@@ -100,8 +103,8 @@ public class OrderService {
             orderedIngredientsRepository.updateQuantityByOrderIdAndIngredientName(newQuantity,
                     orderId,ingredientName);
         });
-
-        return new ResponseEntity<>(Map.of("status","updated"),HttpStatus.OK);
+        var response=new ApiResponse<>(Status.SUCCESS,null);
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
     public ResponseEntity<?> deleteOrderById(String id, User user) {

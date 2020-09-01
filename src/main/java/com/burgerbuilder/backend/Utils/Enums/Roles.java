@@ -1,4 +1,4 @@
-package com.burgerbuilder.backend.Model;
+package com.burgerbuilder.backend.Utils.Enums;
 
 public enum Roles {
     ROLE_USER,

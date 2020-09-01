@@ -1,9 +1,13 @@
 package com.burgerbuilder.backend.Utils.Seeds;
 
 import com.burgerbuilder.backend.BackendApplication;
-import com.burgerbuilder.backend.Model.*;
+import com.burgerbuilder.backend.Model.Address;
+import com.burgerbuilder.backend.Model.Ingredient;
+import com.burgerbuilder.backend.Model.Product;
+import com.burgerbuilder.backend.Model.User;
 import com.burgerbuilder.backend.Repository.*;
 import com.burgerbuilder.backend.Service.EmailService;
+import com.burgerbuilder.backend.Utils.Enums.Roles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -36,8 +40,8 @@ public class Seeds implements CommandLineRunner {
 
     @Override
     public void run(String... args)  {
-        List<Address> addresses=addressRepository.findAll();
-        if(addresses.isEmpty()) {
+        List<Product> products=productRepository.findAll();
+        if(products.isEmpty()) {
             logger.info("adding some data ...");
             User user = new User("at.zahreddine@gmail.com",passwordEncoder.encode("azerty123"),
                     "zahreddine","atoui","+21626945535");
