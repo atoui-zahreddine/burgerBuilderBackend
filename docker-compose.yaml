@@ -5,27 +5,16 @@ services :
       mysql:latest
     ports:
     - 3307:3306
-    environment:
-      - MYSQL_ROOT_PASSWORD=Azerty.123
-      - MYSQL_DATABASE=burgerbuilderdb
-      - MYSQL_USER=admin
-      - MYSQL_PASSWORD=Azerty.123
+    env_file:
+      - ./.env
     volumes:
     - mysql-data:/var/lib/mysql
   burger-builder-api :
     image: burger-builder-api
     ports:
     - 8080:8080
-    environment:
-      - JDBC_DATABASE_URL=jdbc:mysql://docker-mysql:3306/burgerbuilderdb
-      - JDBC_DATABASE_USERNAME=admin
-      - JDBC_DATABASE_PASSWORD=Azerty.123
-      - AUTH_TOKEN_expiration=3600
-      - AUTH_SECRET=zahryy
-      - AUTH_HEADER=AUTHORIZATION
-      - MAIL_PASSWORD=dvvgeaokoafnthcs
-      - MAIL_USERNAME=at.zahreddine@gmail.com
-      - PORT=8080
+    env_file:
+      - ./.env
     depends_on:
       - docker-mysql
 volumes:
